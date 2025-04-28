@@ -1,4 +1,4 @@
-# Country Calling Code Picker
+# Country Calling Code Picker Plus
 
 > This project draws inspiration from the country-calling-code-picker package written in dart. The original package can be found [here](https://github.com/dev-naiksan/country-calling-code-picker). We extend our heartfelt gratitude to the original author for their remarkable work.
 

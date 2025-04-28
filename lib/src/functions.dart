@@ -5,9 +5,10 @@ import '../country_calling_code_picker_plus.dart';
 
 ///This function returns list of countries
 Future<List<Country>> getCountries(BuildContext context) async {
-  String rawData = await DefaultAssetBundle.of(context).loadString('assets/raw/country_codes.json');
+  String rawData = await DefaultAssetBundle.of(context)
+      .loadString('assets/raw/country_codes.json');
   final parsed = json.decode(rawData.toString()).cast<Map<String, dynamic>>();
-  return parsed.map<Country>((json) => new Country.fromJson(json)).toList();
+  return parsed.map<Country>((json) => Country.fromJson(json)).toList();
 }
 
 ///This function returns an user's current country. User's sim country code is matched with the ones in the list.
@@ -17,15 +18,12 @@ Future<List<Country>> getCountries(BuildContext context) async {
 Future<Country> getDefaultCountry(BuildContext context) async {
   final list = await getCountries(context);
   try {
-    // final countryCode = await FlutterSimCountryCode.simCountryCode;
     final countryCode = await DeviceRegion.getSIMCountryCode();
-    // final List<SimInfo>? countryCodeList = await SimCardInfo().getSimInfo();
-    // final String? countryCode = (countryCodeList!=null) ? countryCodeList[0].countryPhonePrefix : null;
     if (countryCode == null) {
       return list.first;
     }
     return list.firstWhere((element) =>
-    element.countryCode.toLowerCase() == countryCode.toLowerCase());
+        element.countryCode.toLowerCase() == countryCode.toLowerCase());
   } catch (e) {
     return list.first;
   }
@@ -40,12 +38,12 @@ Future<Country?> getCountryByCountryCode(
 
 Future<Country?> showCountryPickerSheet(BuildContext context,
     {Widget? title,
-      Widget? cancelWidget,
-      double cornerRadius = 35,
-      bool focusSearchBox =  false,
-      double heightFactor = 0.9}) {
+    Widget? cancelWidget,
+    double cornerRadius = 35,
+    bool focusSearchBox = false,
+    double heightFactor = 0.9}) {
   assert(heightFactor <= 0.9 && heightFactor >= 0.4,
-  'heightFactor must be between 0.4 and 0.9');
+      'heightFactor must be between 0.4 and 0.9');
   return showModalBottomSheet<Country?>(
       context: context,
       isScrollControlled: true,
@@ -96,52 +94,52 @@ Future<Country?> showCountryPickerSheet(BuildContext context,
 }
 
 Future<Country?> showCountryPickerDialog(
-    BuildContext context, {
-      Widget? title,
-      double cornerRadius = 35,
-      bool focusSearchBox = false,
-    }) {
+  BuildContext context, {
+  Widget? title,
+  double cornerRadius = 35,
+  bool focusSearchBox = false,
+}) {
   return showDialog<Country?>(
       context: context,
       barrierDismissible: true,
       builder: (_) => Dialog(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
               Radius.circular(cornerRadius),
             )),
-        child: Column(
-          children: <Widget>[
-            SizedBox(height: 16),
-            Stack(
+            child: Column(
               children: <Widget>[
-                Positioned(
-                  right: 8,
-                  top: 4,
-                  bottom: 0,
-                  child: TextButton(
-                      child: Text('Cancel'),
-                      onPressed: () => Navigator.pop(context)),
+                SizedBox(height: 16),
+                Stack(
+                  children: <Widget>[
+                    Positioned(
+                      right: 8,
+                      top: 4,
+                      bottom: 0,
+                      child: TextButton(
+                          child: Text('Cancel'),
+                          onPressed: () => Navigator.pop(context)),
+                    ),
+                    Center(
+                      child: title ??
+                          Text(
+                            'Choose region',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                    ),
+                  ],
                 ),
-                Center(
-                  child: title ??
-                      Text(
-                        'Choose region',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 25,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
+                SizedBox(height: 16),
+                Expanded(
+                  child: CountryPickerWidget(
+                    onSelected: (country) => Navigator.of(context).pop(country),
+                  ),
                 ),
               ],
             ),
-            SizedBox(height: 16),
-            Expanded(
-              child: CountryPickerWidget(
-                onSelected: (country) => Navigator.of(context).pop(country),
-              ),
-            ),
-          ],
-        ),
-      ));
+          ));
 }

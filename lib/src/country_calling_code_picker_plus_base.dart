@@ -1,4 +1,4 @@
-library countrycodepickerplus;
+library;
 
 import 'package:device_region/device_region.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +36,7 @@ class CountryPickerWidget extends StatefulWidget {
   final String searchHintText;
 
   const CountryPickerWidget({
-    Key? key,
+    super.key,
     this.onSelected,
     this.itemTextStyle = _defaultItemTextStyle,
     this.searchInputStyle = _defaultSearchInputStyle,
@@ -45,17 +45,17 @@ class CountryPickerWidget extends StatefulWidget {
     this.flagIconSize = 32,
     this.showSeparator = false,
     this.focusSearchBox = false,
-  }) : super(key: key);
+  });
 
   @override
-  _CountryPickerWidgetState createState() => _CountryPickerWidgetState();
+  CountryPickerWidgetState createState() => CountryPickerWidgetState();
 }
 
-class _CountryPickerWidgetState extends State<CountryPickerWidget> {
+class CountryPickerWidgetState extends State<CountryPickerWidget> {
   List<Country> _list = [];
   List<Country> _filteredList = [];
-  TextEditingController _controller = new TextEditingController();
-  ScrollController _scrollController = new ScrollController();
+  final TextEditingController _controller = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   bool _isLoading = false;
   Country? _currentCountry;
 
@@ -69,15 +69,15 @@ class _CountryPickerWidgetState extends State<CountryPickerWidget> {
       setState(() {
         _filteredList = _list
             .where((element) =>
-        element.name
-            .toLowerCase()
-            .contains(text.toString().toLowerCase()) ||
-            element.callingCode
-                .toLowerCase()
-                .contains(text.toString().toLowerCase()) ||
-            element.countryCode
-                .toLowerCase()
-                .startsWith(text.toString().toLowerCase()))
+                element.name
+                    .toLowerCase()
+                    .contains(text.toString().toLowerCase()) ||
+                element.callingCode
+                    .toLowerCase()
+                    .contains(text.toString().toLowerCase()) ||
+                element.countryCode
+                    .toLowerCase()
+                    .startsWith(text.toString().toLowerCase()))
             .map((e) => e)
             .toList();
       });
@@ -113,10 +113,12 @@ class _CountryPickerWidgetState extends State<CountryPickerWidget> {
       final country = _currentCountry;
       if (country != null) {
         _list.removeWhere(
-                (element) => element.callingCode == country.callingCode);
+            (element) => element.callingCode == country.callingCode);
         _list.insert(0, country);
       }
-    } catch (e) {} finally {
+    } catch (e) {
+      throw FormatException(e.toString());
+    } finally {
       setState(() {
         _filteredList = _list.map((e) => e).toList();
         _isLoading = false;
@@ -154,7 +156,7 @@ class _CountryPickerWidgetState extends State<CountryPickerWidget> {
                     borderRadius: BorderRadius.circular(30),
                   ),
                   contentPadding:
-                  EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
+                      EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
                   hintText: widget.searchHintText,
                 ),
             textInputAction: TextInputAction.done,
@@ -169,39 +171,39 @@ class _CountryPickerWidgetState extends State<CountryPickerWidget> {
           child: _isLoading
               ? Center(child: CircularProgressIndicator())
               : ListView.separated(
-            padding: EdgeInsets.only(top: 16),
-            controller: _scrollController,
-            itemCount: _filteredList.length,
-            separatorBuilder: (_, index) =>
-            widget.showSeparator ? Divider() : Container(),
-            itemBuilder: (_, index) {
-              return InkWell(
-                onTap: () {
-                  widget.onSelected?.call(_filteredList[index]);
-                },
-                child: Container(
-                  padding: EdgeInsets.only(
-                      bottom: 12, top: 12, left: 24, right: 24),
-                  child: Row(
-                    children: <Widget>[
-                      Image.asset(
-                        _filteredList[index].flag,
-                        width: widget.flagIconSize,
+                  padding: EdgeInsets.only(top: 16),
+                  controller: _scrollController,
+                  itemCount: _filteredList.length,
+                  separatorBuilder: (_, index) =>
+                      widget.showSeparator ? Divider() : Container(),
+                  itemBuilder: (_, index) {
+                    return InkWell(
+                      onTap: () {
+                        widget.onSelected?.call(_filteredList[index]);
+                      },
+                      child: Container(
+                        padding: EdgeInsets.only(
+                            bottom: 12, top: 12, left: 24, right: 24),
+                        child: Row(
+                          children: <Widget>[
+                            Image.asset(
+                              _filteredList[index].flag,
+                              width: widget.flagIconSize,
+                            ),
+                            SizedBox(
+                              width: 16,
+                            ),
+                            Expanded(
+                                child: Text(
+                              '${_filteredList[index].callingCode} ${_filteredList[index].name}',
+                              style: widget.itemTextStyle,
+                            )),
+                          ],
+                        ),
                       ),
-                      SizedBox(
-                        width: 16,
-                      ),
-                      Expanded(
-                          child: Text(
-                            '${_filteredList[index].callingCode} ${_filteredList[index].name}',
-                            style: widget.itemTextStyle,
-                          )),
-                    ],
-                  ),
+                    );
+                  },
                 ),
-              );
-            },
-          ),
         )
       ],
     );
