@@ -6,7 +6,7 @@ import '../country_calling_code_picker_plus.dart';
 ///This function returns list of countries
 Future<List<Country>> getCountries(BuildContext context) async {
   String rawData = await DefaultAssetBundle.of(context)
-      .loadString('assets/raw/country_codes.json');
+      .loadString('packages/country_calling_code_picker_plus/raw/country_codes.json');
   final parsed = json.decode(rawData.toString()).cast<Map<String, dynamic>>();
   return parsed.map<Country>((json) => Country.fromJson(json)).toList();
 }
