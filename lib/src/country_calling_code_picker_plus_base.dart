@@ -8,7 +8,7 @@ import 'functions.dart';
 const TextStyle _defaultItemTextStyle = TextStyle(fontSize: 16);
 const TextStyle _defaultSearchInputStyle = TextStyle(fontSize: 16);
 const String _kDefaultSearchHintText = 'Search country name, code';
-const String countryCodePackageName = 'country_calling_code_picker';
+const String countryCodePackageName = 'country_calling_code_picker_plus';
 
 class CountryPickerWidget extends StatefulWidget {
   /// This callback will be called on selection of a [Country].
@@ -189,6 +189,7 @@ class CountryPickerWidgetState extends State<CountryPickerWidget> {
                             Image.asset(
                               _filteredList[index].flag,
                               width: widget.flagIconSize,
+                              package: countryCodePackageName,
                             ),
                             SizedBox(
                               width: 16,
